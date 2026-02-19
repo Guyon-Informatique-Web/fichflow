@@ -2,7 +2,7 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 // Routes publiques (pas de redirection)
-const PUBLIC_ROUTES = ["/", "/connexion", "/inscription", "/robots.txt", "/sitemap.xml"];
+const PUBLIC_ROUTES = ["/", "/connexion", "/inscription", "/robots.txt", "/sitemap.xml", "/mentions-legales", "/cgv", "/confidentialite"];
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
