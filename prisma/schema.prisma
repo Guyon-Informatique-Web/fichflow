@@ -1,0 +1,130 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ============================================
+// UTILISATEURS
+// ============================================
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String?
+  role      Role     @default(USER)
+  credits   Int      @default(0)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  products           Product[]
+  creditTransactions CreditTransaction[]
+
+  @@map("users")
+}
+
+// ============================================
+// PRODUITS (fiches)
+// ============================================
+
+model Product {
+  id     String @id @default(uuid())
+  userId String @map("user_id")
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Infos de base (saisies par l'utilisateur)
+  name     String
+  category String
+  price    Decimal?  @db.Decimal(10, 2)
+  notes    String?   // Infos supplémentaires pour guider la génération
+  tone     Tone      @default(PROFESSIONNEL)
+
+  // Photos (URLs Supabase Storage)
+  photos String[] // Array d'URLs
+
+  // Contenu généré par l'IA
+  generatedTitle           String?  @map("generated_title")
+  generatedDescription     String?  @map("generated_description") @db.Text
+  generatedCharacteristics Json?    @map("generated_characteristics") // { "Couleur": "Noir", "Matière": "Dentelle" }
+  generatedAttributes      Json?    @map("generated_attributes") // Attributs bruts extraits de la photo
+
+  // Contenu personnalisé par l'utilisateur (écrase le généré si présent)
+  customTitle           String? @map("custom_title")
+  customDescription     String? @map("custom_description") @db.Text
+  customCharacteristics Json?   @map("custom_characteristics")
+
+  status    ProductStatus @default(DRAFT)
+  createdAt DateTime      @default(now()) @map("created_at")
+  updatedAt DateTime      @updatedAt @map("updated_at")
+
+  exports ExportHistory[]
+
+  @@map("products")
+}
+
+// ============================================
+// CRÉDITS
+// ============================================
+
+model CreditTransaction {
+  id              String          @id @default(uuid())
+  userId          String          @map("user_id")
+  user            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type            TransactionType
+  amount          Int             // Positif = achat/bonus, négatif = consommation
+  description     String
+  stripeSessionId String?         @map("stripe_session_id")
+  createdAt       DateTime        @default(now()) @map("created_at")
+
+  @@map("credit_transactions")
+}
+
+// ============================================
+// HISTORIQUE DES EXPORTS
+// ============================================
+
+model ExportHistory {
+  id        String       @id @default(uuid())
+  productId String       @map("product_id")
+  product   Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
+  format    ExportFormat
+  createdAt DateTime     @default(now()) @map("created_at")
+
+  @@map("export_history")
+}
+
+// ============================================
+// ENUMS
+// ============================================
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum Tone {
+  PROFESSIONNEL
+  SENSUEL
+  DECONTRACTE
+  LUXE
+  PERSONNALISE
+}
+
+enum ProductStatus {
+  DRAFT
+  COMPLETED
+}
+
+enum TransactionType {
+  PURCHASE
+  CONSUMPTION
+  BONUS
+}
+
+enum ExportFormat {
+  PDF
+  TEXT
+}
