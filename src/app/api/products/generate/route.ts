@@ -30,6 +30,20 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Non authentifié." }, { status: 401 });
     }
 
+    // Rate limiting : 10 requêtes par minute par utilisateur
+    const { checkRateLimit } = await import("@/lib/rate-limit");
+    const rateLimit = checkRateLimit(`generate:${supabaseUser.id}`, {
+      maxRequests: 10,
+      windowSeconds: 60,
+    });
+
+    if (!rateLimit.allowed) {
+      return NextResponse.json(
+        { error: "Trop de requêtes. Réessayez dans quelques instants." },
+        { status: 429 }
+      );
+    }
+
     // Vérifier les crédits
     const user = await prisma.user.findUnique({
       where: { id: supabaseUser.id },

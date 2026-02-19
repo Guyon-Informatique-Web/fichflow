@@ -45,6 +45,19 @@ export const metadata: Metadata = {
     type: "website",
     locale: "fr_FR",
     siteName: "FichFlow",
+    title: "FichFlow — Créez vos fiches produit en 30 secondes",
+    description:
+      "Uploadez une photo, obtenez une fiche produit professionnelle avec description, caractéristiques et export PDF.",
+    url: process.env.NEXT_PUBLIC_APP_URL || "https://fichflow.vercel.app",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "FichFlow — Créez vos fiches produit en 30 secondes",
+    description:
+      "Uploadez une photo, obtenez une fiche produit professionnelle avec description, caractéristiques et export PDF.",
+  },
+  alternates: {
+    canonical: process.env.NEXT_PUBLIC_APP_URL || "https://fichflow.vercel.app",
   },
   robots: {
     index: true,

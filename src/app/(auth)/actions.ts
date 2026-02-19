@@ -114,6 +114,36 @@ export async function signupAction(formData: FormData): Promise<AuthResult> {
         description: "Crédits offerts à l'inscription",
       },
     });
+
+    // Envoyer l'email de bienvenue (non bloquant)
+    try {
+      const { resend } = await import("@/lib/resend");
+      await resend.emails.send({
+        from: process.env.EMAIL_FROM || "FichFlow <noreply@fichflow.fr>",
+        to: user.email!,
+        subject: "Bienvenue sur FichFlow !",
+        html: `
+          <div style="font-family: sans-serif; max-width: 500px; margin: 0 auto;">
+            <h2>Bienvenue sur FichFlow, ${name} !</h2>
+            <p>Votre compte a été créé avec succès.</p>
+            <p>Vous avez <strong>${FREE_CREDITS} crédits gratuits</strong> pour tester le service.</p>
+            <p>1 crédit = 1 fiche produit complète (génération IA + export PDF).</p>
+            <p style="margin-top: 24px;">
+              <a href="${process.env.NEXT_PUBLIC_APP_URL || "https://fichflow.vercel.app"}/produits/nouveau"
+                 style="background: #171717; color: white; padding: 10px 20px; text-decoration: none; border-radius: 6px;">
+                Créer ma première fiche
+              </a>
+            </p>
+            <p style="margin-top: 32px; color: #888; font-size: 13px;">
+              — L'équipe FichFlow
+            </p>
+          </div>
+        `,
+      });
+    } catch {
+      // Ne pas bloquer l'inscription si l'email échoue
+      console.error("Erreur envoi email de bienvenue");
+    }
   }
 
   redirect("/dashboard");
