@@ -8,6 +8,7 @@ import {
   MAX_PHOTO_SIZE_MB,
   ACCEPTED_IMAGE_TYPES,
 } from "@/lib/constants";
+import { withErrorHandling } from "@/lib/api-error-handler";
 import type { Tone } from "@/generated/prisma/enums";
 
 // Types pour la réponse IA structurée
@@ -18,7 +19,7 @@ interface GeneratedContent {
   attributes: Record<string, string>;
 }
 
-export async function POST(request: Request) {
+export const POST = withErrorHandling(async (request) => {
   try {
     // Vérifier l'authentification
     const supabase = await createClient();
@@ -277,4 +278,4 @@ Règles :
       { status: 500 }
     );
   }
-}
+});

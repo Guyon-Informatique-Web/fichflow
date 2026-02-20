@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { prisma } from "@/lib/prisma";
+import { withErrorHandling } from "@/lib/api-error-handler";
 
 // Mettre à jour le profil utilisateur (nom)
-export async function PATCH(request: Request) {
+export const PATCH = withErrorHandling(async (request) => {
   try {
     const supabase = await createClient();
     const {
@@ -44,4 +45,4 @@ export async function PATCH(request: Request) {
       { status: 500 }
     );
   }
-}
+});

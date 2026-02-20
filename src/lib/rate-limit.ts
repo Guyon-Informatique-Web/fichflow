@@ -61,3 +61,21 @@ export function checkRateLimit(
     resetAt: entry.resetAt,
   };
 }
+
+// Alias compatible avec le pattern error-handler (success au lieu de allowed)
+export function rateLimit(
+  key: string,
+  options: { maxRequests: number; windowSeconds: number }
+): { success: boolean; remaining: number; resetAt: number } {
+  const result = checkRateLimit(key, options);
+  return { success: result.allowed, remaining: result.remaining, resetAt: result.resetAt };
+}
+
+// Extraire l'IP depuis les headers (Next.js / Vercel)
+export function getClientIp(headers: Headers): string {
+  return (
+    headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+    headers.get("x-real-ip") ||
+    "unknown"
+  );
+}

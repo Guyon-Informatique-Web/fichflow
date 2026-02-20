@@ -1,13 +1,10 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { prisma } from "@/lib/prisma";
-
-interface Props {
-  params: Promise<{ id: string }>;
-}
+import { withErrorHandling } from "@/lib/api-error-handler";
 
 // Mettre à jour les champs personnalisés d'un produit
-export async function PATCH(request: Request, { params }: Props) {
+export const PATCH = withErrorHandling(async (request, { params }) => {
   try {
     const { id } = await params;
 
@@ -53,10 +50,10 @@ export async function PATCH(request: Request, { params }: Props) {
       { status: 500 }
     );
   }
-}
+});
 
 // Supprimer un produit et ses photos associées
-export async function DELETE(_request: Request, { params }: Props) {
+export const DELETE = withErrorHandling(async (_request, { params }) => {
   try {
     const { id } = await params;
 
@@ -106,4 +103,4 @@ export async function DELETE(_request: Request, { params }: Props) {
       { status: 500 }
     );
   }
-}
+});

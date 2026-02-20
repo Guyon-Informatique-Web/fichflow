@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { prisma } from "@/lib/prisma";
+import { withErrorHandling } from "@/lib/api-error-handler";
 
 // Ajouter des crédits bonus à un utilisateur (admin uniquement)
-export async function POST(request: Request) {
+export const POST = withErrorHandling(async (request) => {
   try {
     // Vérifier l'authentification
     const supabase = await createClient();
@@ -61,4 +62,4 @@ export async function POST(request: Request) {
       { status: 500 }
     );
   }
-}
+});

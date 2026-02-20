@@ -1,12 +1,13 @@
 import { NextResponse } from "next/server";
 import { stripe } from "@/lib/stripe";
 import { prisma } from "@/lib/prisma";
+import { withErrorHandling } from "@/lib/api-error-handler";
 import type Stripe from "stripe";
 
 // Désactiver le body parser Next.js (Stripe a besoin du raw body)
 export const dynamic = "force-dynamic";
 
-export async function POST(request: Request) {
+export const POST = withErrorHandling(async (request) => {
   const body = await request.text();
   const signature = request.headers.get("stripe-signature");
 
@@ -124,4 +125,4 @@ export async function POST(request: Request) {
   }
 
   return NextResponse.json({ received: true });
-}
+}, "WEBHOOK");

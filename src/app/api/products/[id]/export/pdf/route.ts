@@ -3,12 +3,9 @@ import { createClient } from "@/lib/supabase/server";
 import { prisma } from "@/lib/prisma";
 import { renderToBuffer } from "@react-pdf/renderer";
 import { ProductPdf } from "@/components/pdf/ProductPdf";
+import { withErrorHandling } from "@/lib/api-error-handler";
 
-interface Props {
-  params: Promise<{ id: string }>;
-}
-
-export async function GET(_request: Request, { params }: Props) {
+export const GET = withErrorHandling(async (_request, { params }) => {
   try {
     const { id } = await params;
 
@@ -78,4 +75,4 @@ export async function GET(_request: Request, { params }: Props) {
       { status: 500 }
     );
   }
-}
+});

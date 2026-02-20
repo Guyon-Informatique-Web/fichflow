@@ -2,8 +2,9 @@ import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { stripe } from "@/lib/stripe";
 import { CREDIT_PACKS } from "@/lib/constants";
+import { withErrorHandling } from "@/lib/api-error-handler";
 
-export async function POST(request: Request) {
+export const POST = withErrorHandling(async (request) => {
   try {
     // Vérifier l'authentification
     const supabase = await createClient();
@@ -62,4 +63,4 @@ export async function POST(request: Request) {
       { status: 500 }
     );
   }
-}
+}, "PAYMENT");

@@ -12,7 +12,20 @@ export default function GlobalError({
   reset: () => void;
 }) {
   useEffect(() => {
-    console.error("Erreur non gérée:", error);
+    console.error("Erreur non geree:", error);
+
+    // Envoyer l'erreur au serveur pour logging + email
+    fetch("/api/error-report", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        message: error.message,
+        trace: error.stack,
+        digest: error.digest,
+      }),
+    }).catch(() => {
+      // Silencieux si le log echoue
+    });
   }, [error]);
 
   return (
