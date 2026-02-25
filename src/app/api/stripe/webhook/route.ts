@@ -185,7 +185,8 @@ export const POST = withErrorHandling(async (request) => {
   // ── Facture Stripe payée (renouvellement abonnement = crédits mensuels) ──
   if (event.type === "invoice.paid") {
     const stripeInvoice = event.data.object as Stripe.Invoice;
-    const subscriptionId = stripeInvoice.subscription as string | null;
+    const subDetails = stripeInvoice.parent?.subscription_details;
+    const subscriptionId = (subDetails?.subscription as string) || null;
 
     if (subscriptionId) {
       const user = await prisma.user.findFirst({

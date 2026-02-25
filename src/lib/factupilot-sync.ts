@@ -58,7 +58,7 @@ export async function syncPaymentToFactuPilot(data: SyncPaymentData): Promise<vo
     try {
       await prisma.syncQueue.create({
         data: {
-          payload: data as unknown as Record<string, unknown>,
+          payload: JSON.parse(JSON.stringify(data)),
           status: "PENDING",
           attempts: 1,
           lastAttemptAt: new Date(),
