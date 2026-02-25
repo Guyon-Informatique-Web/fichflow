@@ -114,6 +114,11 @@ interface ProductPdfProps {
   category: string;
   price: number | null;
   photos: string[];
+  branding?: {
+    companyName: string;
+    primaryColor: string | null;
+    logoUrl: string | null;
+  } | null;
 }
 
 export function ProductPdf({
@@ -124,13 +129,16 @@ export function ProductPdf({
   category,
   price,
   photos,
+  branding,
 }: ProductPdfProps) {
   return (
     <Document>
       <Page size="A4" style={styles.page}>
         {/* En-tête */}
         <View style={styles.header}>
-          <Text style={styles.logo}>FichFlow</Text>
+          <Text style={[styles.logo, branding?.primaryColor ? { color: branding.primaryColor } : {}]}>
+            {branding?.companyName || "FichFlow"}
+          </Text>
           <Text style={styles.category}>{category}</Text>
         </View>
 
@@ -145,7 +153,9 @@ export function ProductPdf({
 
           {/* Informations */}
           <View style={styles.infoColumn}>
-            <Text style={styles.title}>{title}</Text>
+            <Text style={[styles.title, branding?.primaryColor ? { color: branding.primaryColor } : {}]}>
+              {title}
+            </Text>
             {price && <Text style={styles.price}>{price.toFixed(2)} €</Text>}
 
             <Text style={styles.sectionTitle}>Description</Text>
@@ -169,7 +179,7 @@ export function ProductPdf({
 
         {/* Pied de page */}
         <Text style={styles.footer}>
-          Fiche produit générée par FichFlow — {name}
+          {branding ? `Fiche produit — ${branding.companyName}` : `Fiche produit générée par FichFlow — ${name}`}
         </Text>
       </Page>
     </Document>
