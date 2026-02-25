@@ -6,7 +6,7 @@ import { prisma } from "@/lib/prisma"
 import { withErrorHandling } from "@/lib/api-error-handler"
 
 const FACTUPILOT_SYNC_URL = process.env.FACTUPILOT_SYNC_URL || "https://factupilot-dun.vercel.app"
-const SYNC_API_KEY = process.env.SYNC_API_KEY
+const FACTUPILOT_APP_KEY = process.env.FACTUPILOT_APP_KEY
 const MAX_ATTEMPTS = 5
 
 export const GET = withErrorHandling(async (request: NextRequest) => {
@@ -18,8 +18,8 @@ export const GET = withErrorHandling(async (request: NextRequest) => {
     return NextResponse.json({ error: "Non autorisé." }, { status: 401 })
   }
 
-  if (!SYNC_API_KEY) {
-    return NextResponse.json({ error: "SYNC_API_KEY non configuré." }, { status: 500 })
+  if (!FACTUPILOT_APP_KEY) {
+    return NextResponse.json({ error: "FACTUPILOT_APP_KEY non configuré." }, { status: 500 })
   }
 
   // Récupérer les syncs en attente (PENDING ou FAILED avec < MAX_ATTEMPTS)
@@ -46,7 +46,7 @@ export const GET = withErrorHandling(async (request: NextRequest) => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "X-Sync-Key": SYNC_API_KEY,
+          "Authorization": `Bearer ${FACTUPILOT_APP_KEY}`,
         },
         body: JSON.stringify(sync.payload),
         signal: AbortSignal.timeout(15000),

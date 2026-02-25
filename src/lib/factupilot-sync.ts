@@ -1,14 +1,14 @@
 // Utilitaire de synchronisation des paiements vers FactuPilot
 // Appelle l'API /api/v1/sync/payment de FactuPilot après chaque paiement réussi
+// Auth : Bearer fp_app_* (hub multi-SaaS)
 // Non-bloquant : en cas d'échec, enregistre dans SyncQueue pour retry CRON
 
 import { prisma } from "@/lib/prisma"
 
 const FACTUPILOT_SYNC_URL = process.env.FACTUPILOT_SYNC_URL || "https://factupilot-dun.vercel.app"
-const SYNC_API_KEY = process.env.SYNC_API_KEY
+const FACTUPILOT_APP_KEY = process.env.FACTUPILOT_APP_KEY
 
 interface SyncPaymentData {
-  source: string
   client: {
     email: string
     name: string
@@ -27,8 +27,8 @@ interface SyncPaymentData {
  * En cas d'échec, enregistre dans SyncQueue pour retry par le CRON.
  */
 export async function syncPaymentToFactuPilot(data: SyncPaymentData): Promise<void> {
-  if (!SYNC_API_KEY) {
-    console.warn("SYNC_API_KEY non configuré — sync FactuPilot désactivée.")
+  if (!FACTUPILOT_APP_KEY) {
+    console.warn("FACTUPILOT_APP_KEY non configuré — sync FactuPilot désactivée.")
     return
   }
 
@@ -37,7 +37,7 @@ export async function syncPaymentToFactuPilot(data: SyncPaymentData): Promise<vo
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "X-Sync-Key": SYNC_API_KEY,
+        "Authorization": `Bearer ${FACTUPILOT_APP_KEY}`,
       },
       body: JSON.stringify(data),
       signal: AbortSignal.timeout(10000),

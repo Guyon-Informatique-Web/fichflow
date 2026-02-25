@@ -121,7 +121,6 @@ export const POST = withErrorHandling(async (request) => {
       const { syncPaymentToFactuPilot } = await import("@/lib/factupilot-sync");
       const pack = CREDIT_PACKS.find((p) => p.id === packId);
       syncPaymentToFactuPilot({
-        source: "fichflow",
         client: {
           email: user.email,
           name: user.name || user.email,
@@ -222,7 +221,6 @@ export const POST = withErrorHandling(async (request) => {
         const amount = (stripeInvoice.amount_paid || 0) / 100;
         if (amount > 0) {
           syncPaymentToFactuPilot({
-            source: "fichflow",
             client: { email: user.email, name: user.name || user.email },
             payment: {
               amount,
