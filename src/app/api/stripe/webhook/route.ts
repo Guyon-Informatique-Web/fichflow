@@ -146,5 +146,95 @@ export const POST = withErrorHandling(async (request) => {
     }
   }
 
+  // ── Abonnement créé ou mis à jour ──
+  if (
+    event.type === "customer.subscription.created" ||
+    event.type === "customer.subscription.updated"
+  ) {
+    const subscription = event.data.object as Stripe.Subscription;
+    const plan = subscription.metadata?.plan as string;
+
+    if (plan && ["FREE", "ARTISAN", "PRO"].includes(plan)) {
+      const customerId = subscription.customer as string;
+      await prisma.user.updateMany({
+        where: { stripeCustomerId: customerId },
+        data: {
+          plan: plan as "FREE" | "ARTISAN" | "PRO",
+          stripeSubscriptionId: subscription.id,
+        },
+      });
+      console.log(`Plan mis à jour: ${plan} pour customer ${customerId}`);
+    }
+  }
+
+  // ── Abonnement supprimé (désabonnement) ──
+  if (event.type === "customer.subscription.deleted") {
+    const subscription = event.data.object as Stripe.Subscription;
+    const customerId = subscription.customer as string;
+
+    await prisma.user.updateMany({
+      where: { stripeCustomerId: customerId },
+      data: {
+        plan: "FREE",
+        stripeSubscriptionId: null,
+      },
+    });
+    console.log(`Désabonnement: customer ${customerId} repassé en FREE`);
+  }
+
+  // ── Facture Stripe payée (renouvellement abonnement = crédits mensuels) ──
+  if (event.type === "invoice.paid") {
+    const stripeInvoice = event.data.object as Stripe.Invoice;
+    const subscriptionId = stripeInvoice.subscription as string | null;
+
+    if (subscriptionId) {
+      const user = await prisma.user.findFirst({
+        where: { stripeSubscriptionId: subscriptionId },
+      });
+
+      if (user) {
+        const { PLANS } = await import("@/config/plans");
+        const planConfig = PLANS[user.plan as keyof typeof PLANS];
+        const monthlyCredits = planConfig?.limits?.monthlyCredits || 0;
+
+        if (monthlyCredits > 0) {
+          await prisma.$transaction([
+            prisma.user.update({
+              where: { id: user.id },
+              data: { credits: { increment: monthlyCredits } },
+            }),
+            prisma.creditTransaction.create({
+              data: {
+                userId: user.id,
+                type: "BONUS",
+                amount: monthlyCredits,
+                description: `Crédits mensuels plan ${planConfig.name} — ${monthlyCredits} crédits`,
+                stripeSessionId: stripeInvoice.id,
+              },
+            }),
+          ]);
+          console.log(`${monthlyCredits} crédits mensuels ajoutés pour ${user.email}`);
+        }
+
+        // Sync vers FactuPilot (abonnement)
+        const { syncPaymentToFactuPilot } = await import("@/lib/factupilot-sync");
+        const amount = (stripeInvoice.amount_paid || 0) / 100;
+        if (amount > 0) {
+          syncPaymentToFactuPilot({
+            source: "fichflow",
+            client: { email: user.email, name: user.name || user.email },
+            payment: {
+              amount,
+              description: `Abonnement ${planConfig.name} — renouvellement`,
+              stripePaymentId: stripeInvoice.id,
+              type: "subscription",
+              date: new Date().toISOString(),
+            },
+          }).catch((err) => console.error("Erreur sync FactuPilot:", err));
+        }
+      }
+    }
+  }
+
   return NextResponse.json({ received: true });
 }, "WEBHOOK");
