@@ -19,7 +19,7 @@ export default async function NouveauProduitPage() {
         </p>
       </div>
 
-      <NouveauProduitForm credits={user.credits} />
+      <NouveauProduitForm credits={user.credits} isAdmin={user.role === "ADMIN"} />
     </div>
   );
 }

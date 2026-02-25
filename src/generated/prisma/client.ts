@@ -45,6 +45,11 @@ export { Prisma }
  */
 export type User = Prisma.UserModel
 /**
+ * Model Company
+ * 
+ */
+export type Company = Prisma.CompanyModel
+/**
  * Model Product
  * 
  */
@@ -59,3 +64,8 @@ export type CreditTransaction = Prisma.CreditTransactionModel
  * 
  */
 export type ExportHistory = Prisma.ExportHistoryModel
+/**
+ * Model SyncQueue
+ * 
+ */
+export type SyncQueue = Prisma.SyncQueueModel

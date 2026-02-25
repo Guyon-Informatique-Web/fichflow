@@ -16,7 +16,7 @@ export const POST = withErrorHandling(async (request) => {
 
   // Vérifier que le plan autorise le branding
   const user = await prisma.user.findUnique({ where: { id: supabaseUser.id } })
-  if (!user || (user.plan !== "ARTISAN" && user.plan !== "PRO")) {
+  if (!user || (user.plan !== "ARTISAN" && user.plan !== "PRO" && user.role !== "ADMIN")) {
     return NextResponse.json(
       { error: "Le branding est réservé aux plans Artisan et Pro." },
       { status: 403 }
@@ -57,7 +57,7 @@ export const PATCH = withErrorHandling(async (request) => {
   }
 
   const user = await prisma.user.findUnique({ where: { id: supabaseUser.id } })
-  if (!user || (user.plan !== "ARTISAN" && user.plan !== "PRO")) {
+  if (!user || (user.plan !== "ARTISAN" && user.plan !== "PRO" && user.role !== "ADMIN")) {
     return NextResponse.json(
       { error: "Le branding est réservé aux plans Artisan et Pro." },
       { status: 403 }

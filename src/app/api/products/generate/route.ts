@@ -52,7 +52,7 @@ export const POST = withErrorHandling(async (request) => {
       where: { id: supabaseUser.id },
     });
 
-    if (!user || user.credits < 1) {
+    if (!user || (user.role !== "ADMIN" && user.credits < 1)) {
       return NextResponse.json(
         { error: "Crédits insuffisants." },
         { status: 402 }
@@ -86,7 +86,7 @@ export const POST = withErrorHandling(async (request) => {
       );
     }
 
-    if (photos.length > limits.maxPhotosPerProduct) {
+    if (user.role !== "ADMIN" && photos.length > limits.maxPhotosPerProduct) {
       return NextResponse.json(
         { error: `Votre plan est limité à ${limits.maxPhotosPerProduct} photo(s) par produit. Passez à un plan supérieur pour en ajouter davantage.` },
         { status: 403 }
@@ -94,7 +94,7 @@ export const POST = withErrorHandling(async (request) => {
     }
 
     // Vérifier le ton selon le plan
-    if (!limits.availableTones.includes(tone)) {
+    if (user.role !== "ADMIN" && !limits.availableTones.includes(tone)) {
       return NextResponse.json(
         { error: "Ce ton n'est pas disponible avec votre plan actuel." },
         { status: 403 }
@@ -102,7 +102,7 @@ export const POST = withErrorHandling(async (request) => {
     }
 
     // Vérifier la limite de stockage
-    if (limits.maxStoredProducts > 0) {
+    if (user.role !== "ADMIN" && limits.maxStoredProducts > 0) {
       const productCount = await prisma.product.count({ where: { userId: user.id } });
       if (productCount >= limits.maxStoredProducts) {
         return NextResponse.json(
@@ -223,8 +223,11 @@ Règles :
 - Adapte le vocabulaire au ton demandé
 - N'invente pas de caractéristiques non visibles sur la photo`;
 
+    // Utiliser le modèle PRO pour l'admin, sinon le modèle du plan
+    const aiModel = user.role === "ADMIN" ? "claude-sonnet-4-6" : limits.aiModel;
+
     const response = await anthropic.messages.create({
-      model: limits.aiModel,
+      model: aiModel,
       max_tokens: 2000,
       system: systemPrompt,
       messages: [
@@ -262,8 +265,9 @@ Règles :
       );
     }
 
-    // Créer le produit et débiter le crédit dans une transaction
-    const [product] = await prisma.$transaction([
+    // Créer le produit et débiter le crédit (sauf pour admin)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const transactionsList: any[] = [
       prisma.product.create({
         data: {
           userId: user.id,
@@ -280,19 +284,29 @@ Règles :
           status: "COMPLETED",
         },
       }),
-      prisma.user.update({
-        where: { id: user.id },
-        data: { credits: { decrement: 1 } },
-      }),
-      prisma.creditTransaction.create({
-        data: {
-          userId: user.id,
-          type: "CONSUMPTION",
-          amount: -1,
-          description: `Génération fiche : ${name}`,
-        },
-      }),
-    ]);
+    ];
+
+    // Seulement débiter pour non-admin
+    if (user.role !== "ADMIN") {
+      transactionsList.push(
+        prisma.user.update({
+          where: { id: user.id },
+          data: { credits: { decrement: 1 } },
+        })
+      );
+      transactionsList.push(
+        prisma.creditTransaction.create({
+          data: {
+            userId: user.id,
+            type: "CONSUMPTION",
+            amount: -1,
+            description: `Génération fiche : ${name}`,
+          },
+        })
+      );
+    }
+
+    const [product] = await prisma.$transaction(transactionsList);
 
     return NextResponse.json({ productId: product.id });
   } catch (error) {

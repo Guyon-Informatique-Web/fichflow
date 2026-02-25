@@ -130,3 +130,10 @@ export function getPlanLimits(plan: PlanType): PlanLimits {
 export function isToneAvailable(plan: PlanType, tone: string): boolean {
   return PLANS[plan].limits.availableTones.includes(tone)
 }
+
+/**
+ * Vérifier si l'utilisateur est administrateur
+ */
+export function isAdminUser(role: string): boolean {
+  return role === "ADMIN"
+}

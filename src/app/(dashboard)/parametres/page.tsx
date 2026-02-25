@@ -17,6 +17,7 @@ export default async function ParametresPage() {
   return (
     <BrandingSettings
       plan={user.plan}
+      isAdmin={user.role === "ADMIN"}
       company={company ? {
         id: company.id,
         name: company.name,

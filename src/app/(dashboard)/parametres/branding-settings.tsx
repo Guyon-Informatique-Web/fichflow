@@ -11,6 +11,7 @@ import Link from "next/link"
 
 interface BrandingSettingsProps {
   plan: string
+  isAdmin?: boolean
   company: {
     id: string
     name: string
@@ -19,8 +20,8 @@ interface BrandingSettingsProps {
   } | null
 }
 
-export function BrandingSettings({ plan, company }: BrandingSettingsProps) {
-  const canBrand = plan === "ARTISAN" || plan === "PRO"
+export function BrandingSettings({ plan, isAdmin = false, company }: BrandingSettingsProps) {
+  const canBrand = plan === "ARTISAN" || plan === "PRO" || isAdmin
   const [name, setName] = useState(company?.name || "")
   const [primaryColor, setPrimaryColor] = useState(company?.primaryColor || "#0a0a0a")
   const [saving, setSaving] = useState(false)

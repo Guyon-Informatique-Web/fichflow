@@ -28,9 +28,10 @@ import {
 
 interface NouveauProduitFormProps {
   credits: number;
+  isAdmin?: boolean;
 }
 
-export function NouveauProduitForm({ credits }: NouveauProduitFormProps) {
+export function NouveauProduitForm({ credits, isAdmin = false }: NouveauProduitFormProps) {
   const router = useRouter();
   const [files, setFiles] = useState<File[]>([]);
   const [previews, setPreviews] = useState<string[]>([]);
@@ -80,7 +81,7 @@ export function NouveauProduitForm({ credits }: NouveauProduitFormProps) {
       return;
     }
 
-    if (credits < 1) {
+    if (!isAdmin && credits < 1) {
       toast.error("Crédits insuffisants. Achetez un pack pour continuer.");
       return;
     }
@@ -280,7 +281,7 @@ export function NouveauProduitForm({ credits }: NouveauProduitFormProps) {
             Solde actuel : {credits} crédit{credits !== 1 ? "s" : ""}
           </p>
         </div>
-        <Button type="submit" disabled={loading || credits < 1} size="lg">
+        <Button type="submit" disabled={loading || (!isAdmin && credits < 1)} size="lg">
           {loading ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />

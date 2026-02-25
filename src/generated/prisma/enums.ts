@@ -51,3 +51,21 @@ export const ExportFormat = {
 } as const
 
 export type ExportFormat = (typeof ExportFormat)[keyof typeof ExportFormat]
+
+
+export const Plan = {
+  FREE: 'FREE',
+  ARTISAN: 'ARTISAN',
+  PRO: 'PRO'
+} as const
+
+export type Plan = (typeof Plan)[keyof typeof Plan]
+
+
+export const SyncStatus = {
+  PENDING: 'PENDING',
+  FAILED: 'FAILED',
+  SYNCED: 'SYNCED'
+} as const
+
+export type SyncStatus = (typeof SyncStatus)[keyof typeof SyncStatus]
