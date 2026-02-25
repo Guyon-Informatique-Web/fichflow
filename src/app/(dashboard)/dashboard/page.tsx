@@ -39,7 +39,25 @@ export default async function DashboardPage() {
       </div>
 
       {/* Résumé rapide */}
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-4">
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Plan
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="flex items-center gap-2">
+            <span className="text-2xl font-bold">
+              {user.plan === "FREE" ? "Gratuit" : user.plan === "ARTISAN" ? "Artisan" : "Pro"}
+            </span>
+            {user.plan === "FREE" && (
+              <Link href="/abonnement" className="ml-auto text-xs text-primary underline">
+                Upgrade
+              </Link>
+            )}
+          </CardContent>
+        </Card>
+
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">

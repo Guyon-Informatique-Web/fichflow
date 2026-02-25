@@ -17,6 +17,7 @@ import {
   Star,
 } from "lucide-react";
 import { CREDIT_PACKS } from "@/lib/constants";
+import { PLANS } from "@/config/plans";
 
 // Fonctionnalités
 const FEATURES = [
@@ -257,90 +258,84 @@ export default function HomePage() {
       {/* Tarifs */}
       <section id="tarifs" className="scroll-mt-20 bg-muted/30 py-20">
         <div className="mx-auto max-w-6xl px-4">
-          <div className="text-center">
-            <h2 className="text-3xl font-bold md:text-4xl">
-              Tarifs simples, sans abonnement
-            </h2>
-            <p className="mt-4 text-lg text-muted-foreground">
-              Achetez des crédits, utilisez-les quand vous voulez. 1 crédit = 1
-              fiche complète.
-            </p>
-          </div>
+          <h2 className="mb-4 text-center text-3xl font-bold">
+            Tarifs simples et transparents
+          </h2>
+          <p className="mb-12 text-center text-muted-foreground">
+            Commencez gratuitement, évoluez selon vos besoins
+          </p>
 
-          {/* Offre gratuite */}
-          <div className="mt-16 mb-10 rounded-xl border-2 border-primary bg-primary/5 p-8 text-center">
-            <h3 className="text-xl font-bold">Essai gratuit</h3>
-            <p className="mt-2 text-4xl font-bold">3 fiches offertes</p>
-            <p className="mt-2 text-muted-foreground">
-              Créez un compte et testez FichFlow immédiatement, sans carte
-              bancaire.
-            </p>
-            <Button className="mt-6 text-base" size="lg" asChild>
-              <Link href="/inscription">Commencer gratuitement</Link>
-            </Button>
-          </div>
-
-          {/* Packs */}
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {CREDIT_PACKS.map((pack, i) => {
-              const isPopular = i === 1;
+          <div className="grid gap-8 md:grid-cols-3">
+            {(["FREE", "ARTISAN", "PRO"] as const).map((planKey) => {
+              const plan = PLANS[planKey]
+              const isPopular = planKey === "PRO"
               return (
-                <Card
-                  key={pack.id}
-                  className={`relative flex flex-col ${isPopular ? "border-primary shadow-lg" : ""}`}
+                <div
+                  key={planKey}
+                  className={`rounded-2xl border p-8 ${
+                    isPopular ? "border-primary shadow-lg relative" : ""
+                  }`}
                 >
                   {isPopular && (
-                    <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                      <Badge className="bg-primary text-primary-foreground">
-                        Le plus populaire
-                      </Badge>
-                    </div>
+                    <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-primary px-3 py-1 text-xs font-medium text-primary-foreground">
+                      Recommandé
+                    </span>
                   )}
-                  <CardHeader className="text-center">
-                    <CardTitle className="text-lg">{pack.name}</CardTitle>
-                    <div className="mt-4">
-                      <span className="text-4xl font-bold">{pack.credits}</span>
-                      <span className="text-muted-foreground"> crédits</span>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="flex flex-1 flex-col">
-                    <div className="text-center">
-                      <p className="text-3xl font-bold">{pack.price}€</p>
-                      <p className="text-xs text-muted-foreground">
-                        soit {(pack.price / pack.credits).toFixed(2)}€ / fiche
-                      </p>
-                    </div>
-                    <ul className="mt-6 flex-1 space-y-3">
-                      <li className="flex items-start gap-2 text-sm">
-                        <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-                        <span>{pack.credits} fiches produit</span>
+                  <h3 className="text-xl font-bold">{plan.name}</h3>
+                  <p className="mt-1 text-sm text-muted-foreground">{plan.description}</p>
+                  <div className="mt-4">
+                    {plan.monthlyPrice === 0 ? (
+                      <span className="text-4xl font-bold">0€</span>
+                    ) : (
+                      <>
+                        <span className="text-4xl font-bold">{plan.monthlyPrice}€</span>
+                        <span className="text-muted-foreground">/mois</span>
+                      </>
+                    )}
+                  </div>
+                  <ul className="mt-6 space-y-3">
+                    {plan.features.map((feature) => (
+                      <li key={feature} className="flex items-start gap-2 text-sm">
+                        <svg className="mt-0.5 h-4 w-4 shrink-0 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                        {feature}
                       </li>
-                      <li className="flex items-start gap-2 text-sm">
-                        <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-                        <span>Analyse photo IA</span>
-                      </li>
-                      <li className="flex items-start gap-2 text-sm">
-                        <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-                        <span>Export PDF illimité</span>
-                      </li>
-                      <li className="flex items-start gap-2 text-sm">
-                        <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-                        <span>Crédits sans expiration</span>
-                      </li>
-                    </ul>
-                    <div className="mt-6">
-                      <Button
-                        variant={isPopular ? "default" : "outline"}
-                        className="w-full"
-                        asChild
-                      >
-                        <Link href="/inscription">Choisir</Link>
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              );
+                    ))}
+                  </ul>
+                  <div className="mt-8">
+                    <Link
+                      href={planKey === "FREE" ? "/inscription" : "/inscription"}
+                      className={`block rounded-lg px-4 py-2.5 text-center text-sm font-medium transition-colors ${
+                        isPopular
+                          ? "bg-primary text-primary-foreground hover:bg-primary/90"
+                          : "border hover:bg-muted"
+                      }`}
+                    >
+                      {planKey === "FREE" ? "Commencer gratuitement" : "Essayer gratuitement"}
+                    </Link>
+                  </div>
+                </div>
+              )
             })}
+          </div>
+
+          {/* Packs de crédits */}
+          <div className="mt-16 text-center">
+            <h3 className="mb-2 text-xl font-bold">Besoin ponctuel ?</h3>
+            <p className="mb-8 text-muted-foreground">
+              Achetez des crédits sans abonnement
+            </p>
+            <div className="mx-auto grid max-w-3xl gap-4 sm:grid-cols-4">
+              {CREDIT_PACKS.map((pack) => (
+                <div key={pack.id} className="rounded-xl border p-4 text-center">
+                  <p className="font-medium">{pack.name}</p>
+                  <p className="text-2xl font-bold">{pack.credits}</p>
+                  <p className="text-xs text-muted-foreground">crédits</p>
+                  <p className="mt-2 text-lg font-bold">{pack.price}€</p>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
