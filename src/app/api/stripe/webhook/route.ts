@@ -3,6 +3,7 @@ import { stripe } from "@/lib/stripe";
 import { prisma } from "@/lib/prisma";
 import { withErrorHandling } from "@/lib/api-error-handler";
 import type Stripe from "stripe";
+import { CREDIT_PACKS } from "@/lib/constants";
 
 // Désactiver le body parser Next.js (Stripe a besoin du raw body)
 export const dynamic = "force-dynamic";
@@ -115,6 +116,27 @@ export const POST = withErrorHandling(async (request) => {
       console.log(
         `Crédits ajoutés: ${credits} pour l'utilisateur ${userId} (session ${session.id})`
       );
+
+      // Sync vers FactuPilot (non-bloquant)
+      const { syncPaymentToFactuPilot } = await import("@/lib/factupilot-sync");
+      const pack = CREDIT_PACKS.find((p) => p.id === packId);
+      syncPaymentToFactuPilot({
+        source: "fichflow",
+        client: {
+          email: user.email,
+          name: user.name || user.email,
+        },
+        payment: {
+          amount: pack?.price || 0,
+          description: `Pack ${pack?.name || packId} — ${credits} crédits`,
+          stripePaymentId: session.id,
+          type: "one_time",
+          date: new Date().toISOString(),
+        },
+      }).catch((err) => {
+        // Ne jamais bloquer le webhook pour la sync
+        console.error("Erreur sync FactuPilot (non-bloquant):", err);
+      });
     } catch (error) {
       console.error("Erreur ajout crédits:", error);
       return NextResponse.json(

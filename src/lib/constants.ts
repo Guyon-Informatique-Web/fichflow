@@ -117,3 +117,6 @@ export const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
 // Modèle IA utilisé pour la génération
 export const AI_MODEL = "claude-haiku-4-5-20251001" as const;
 export const AI_MODEL_VISION = "claude-haiku-4-5-20251001" as const;
+
+// Modèle IA premium pour le plan PRO
+export const AI_MODEL_PREMIUM = "claude-sonnet-4-6" as const

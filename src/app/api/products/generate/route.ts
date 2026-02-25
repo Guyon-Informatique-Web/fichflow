@@ -10,6 +10,8 @@ import {
 } from "@/lib/constants";
 import { withErrorHandling } from "@/lib/api-error-handler";
 import type { Tone } from "@/generated/prisma/enums";
+import { getPlanLimits } from "@/config/plans";
+import type { Plan } from "@/generated/prisma/enums";
 
 // Types pour la réponse IA structurée
 interface GeneratedContent {
@@ -57,6 +59,9 @@ export const POST = withErrorHandling(async (request) => {
       );
     }
 
+    // Feature gating selon le plan
+    const limits = getPlanLimits(user.plan as Plan);
+
     // Parser le formulaire
     const formData = await request.formData();
     const name = formData.get("name") as string;
@@ -81,11 +86,30 @@ export const POST = withErrorHandling(async (request) => {
       );
     }
 
-    if (photos.length > MAX_PHOTOS_PER_PRODUCT) {
+    if (photos.length > limits.maxPhotosPerProduct) {
       return NextResponse.json(
-        { error: `Maximum ${MAX_PHOTOS_PER_PRODUCT} photos.` },
-        { status: 400 }
+        { error: `Votre plan est limité à ${limits.maxPhotosPerProduct} photo(s) par produit. Passez à un plan supérieur pour en ajouter davantage.` },
+        { status: 403 }
       );
+    }
+
+    // Vérifier le ton selon le plan
+    if (!limits.availableTones.includes(tone)) {
+      return NextResponse.json(
+        { error: "Ce ton n'est pas disponible avec votre plan actuel." },
+        { status: 403 }
+      );
+    }
+
+    // Vérifier la limite de stockage
+    if (limits.maxStoredProducts > 0) {
+      const productCount = await prisma.product.count({ where: { userId: user.id } });
+      if (productCount >= limits.maxStoredProducts) {
+        return NextResponse.json(
+          { error: `Limite de ${limits.maxStoredProducts} fiches atteinte. Supprimez des fiches ou passez à un plan supérieur.` },
+          { status: 403 }
+        );
+      }
     }
 
     // Valider les fichiers
@@ -200,7 +224,7 @@ Règles :
 - N'invente pas de caractéristiques non visibles sur la photo`;
 
     const response = await anthropic.messages.create({
-      model: AI_MODEL,
+      model: limits.aiModel,
       max_tokens: 2000,
       system: systemPrompt,
       messages: [
