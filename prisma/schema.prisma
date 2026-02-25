@@ -12,18 +12,40 @@ datasource db {
 // ============================================
 
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  name      String?
-  role      Role     @default(USER)
-  credits   Int      @default(0)
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  id                   String   @id @default(uuid())
+  email                String   @unique
+  name                 String?
+  role                 Role     @default(USER)
+  credits              Int      @default(0)
+  plan                 Plan     @default(FREE)
+  stripeCustomerId     String?  @unique @map("stripe_customer_id")
+  stripeSubscriptionId String?  @unique @map("stripe_subscription_id")
+  createdAt            DateTime @default(now()) @map("created_at")
+  updatedAt            DateTime @updatedAt @map("updated_at")
 
   products           Product[]
   creditTransactions CreditTransaction[]
+  company            Company?
 
   @@map("users")
+}
+
+// ============================================
+// ENTREPRISE (branding custom pour abonnés)
+// ============================================
+
+model Company {
+  id           String   @id @default(uuid())
+  userId       String   @unique @map("user_id")
+  name         String   // Nom commercial
+  logoUrl      String?  @map("logo_url") // URL logo dans Supabase Storage
+  primaryColor String?  @map("primary_color") // Couleur principale (#hex)
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("companies")
 }
 
 // ============================================
@@ -131,4 +153,33 @@ enum TransactionType {
 enum ExportFormat {
   PDF
   TEXT
+}
+
+enum Plan {
+  FREE
+  ARTISAN
+  PRO
+}
+
+enum SyncStatus {
+  PENDING
+  FAILED
+  SYNCED
+}
+
+// ============================================
+// SYNC FACTUPILOT
+// ============================================
+
+model SyncQueue {
+  id            String     @id @default(uuid())
+  payload       Json       // Données client + payment à envoyer
+  status        SyncStatus @default(PENDING)
+  attempts      Int        @default(0)
+  lastAttemptAt DateTime?  @map("last_attempt_at")
+  errorMessage  String?    @map("error_message")
+  createdAt     DateTime   @default(now()) @map("created_at")
+
+  @@index([status])
+  @@map("sync_queue")
 }
