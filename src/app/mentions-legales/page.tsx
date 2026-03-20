@@ -53,8 +53,9 @@ export default function MentionsLegalesPage() {
                 Micro-entreprise
               </li>
               <li>Dirigeant : Valentin Guyon</li>
-              <li>SIRET : en cours d&apos;immatriculation</li>
-              <li>Adresse : France</li>
+              <li>SIRET : 89430689300047</li>
+              <li>Code APE : 6201Z</li>
+              <li>Adresse : 34 rue Victor Hugo, 66430 BOMPAS, France</li>
               <li>
                 Email :{" "}
                 <a
