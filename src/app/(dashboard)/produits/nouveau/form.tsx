@@ -268,8 +268,8 @@ export function NouveauProduitForm({ credits, isAdmin = false, canMultiLang = fa
           <Label>Langue de la fiche</Label>
           <div className="flex gap-2">
             {[
-              { value: "FR", flag: "🇫🇷", label: "Français" },
-              { value: "EN", flag: "🇬🇧", label: "English" },
+              { value: "FR", label: "Français", colors: ["#002395", "#FFFFFF", "#ED2939"] },
+              { value: "EN", label: "English", colors: ["#012169", "#C8102E", "#FFFFFF"] },
             ].map((l) => (
               <button
                 key={l.value}
@@ -281,7 +281,23 @@ export function NouveauProduitForm({ credits, isAdmin = false, canMultiLang = fa
                     : "border-border hover:border-primary/50"
                 }`}
               >
-                <span className="text-base">{l.flag}</span>
+                {l.value === "FR" ? (
+                  <svg width="20" height="14" viewBox="0 0 30 20" className="shrink-0 rounded-sm">
+                    <rect width="10" height="20" fill="#002395" />
+                    <rect x="10" width="10" height="20" fill="#FFFFFF" />
+                    <rect x="20" width="10" height="20" fill="#ED2939" />
+                  </svg>
+                ) : (
+                  <svg width="20" height="14" viewBox="0 0 60 40" className="shrink-0 rounded-sm">
+                    <rect width="60" height="40" fill="#012169" />
+                    <path d="M0,0 L60,40 M60,0 L0,40" stroke="#FFFFFF" strokeWidth="7" />
+                    <path d="M0,0 L60,40 M60,0 L0,40" stroke="#C8102E" strokeWidth="4" />
+                    <rect x="25" width="10" height="40" fill="#FFFFFF" />
+                    <rect width="60" y="15" height="10" fill="#FFFFFF" />
+                    <rect x="26" width="8" height="40" fill="#C8102E" />
+                    <rect width="60" y="16" height="8" fill="#C8102E" />
+                  </svg>
+                )}
                 {l.label}
               </button>
             ))}
