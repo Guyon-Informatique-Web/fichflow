@@ -1,7 +1,7 @@
 // Landing page marketing FichFlow
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -11,51 +11,42 @@ import {
   Download,
   Pencil,
   Zap,
-  Palette,
   ArrowRight,
-  Check,
   Star,
+  Smartphone,
 } from "lucide-react";
 import { CREDIT_PACKS } from "@/lib/constants";
 import { PLANS } from "@/config/plans";
 
-// Fonctionnalités
-const FEATURES = [
+// Tons disponibles
+const TONES = [
   {
-    icon: Camera,
-    title: "Analyse photo intelligente",
-    description:
-      "L'IA identifie les couleurs, matières, formes et détails de votre produit directement depuis la photo.",
+    name: "Professionnel",
+    emoji: "💼",
+    example: "Chaise ergonomique en chêne massif. Finitions soignées, confort optimal pour un usage quotidien prolongé.",
+    color: "border-blue-500/30 bg-blue-500/5",
+    badge: "bg-blue-500/10 text-blue-400",
   },
   {
-    icon: FileText,
-    title: "Description optimisée",
-    description:
-      "Textes engageants et uniques, adaptés à votre cible. Pas de contenu générique copié-collé.",
+    name: "Décontracté",
+    emoji: "😎",
+    example: "Une chaise trop sympa qui va cartonner dans votre salon. Bois naturel, confort au top — on adore !",
+    color: "border-green-500/30 bg-green-500/5",
+    badge: "bg-green-500/10 text-green-400",
   },
   {
-    icon: Palette,
-    title: "4 tons au choix",
-    description:
-      "Professionnel, sensuel, décontracté ou luxe. Chaque description s'adapte à votre univers de marque.",
+    name: "Sensuel",
+    emoji: "✨",
+    example: "La courbe parfaite du bois épouse vos formes. Une invitation au confort, une promesse de douceur.",
+    color: "border-pink-500/30 bg-pink-500/5",
+    badge: "bg-pink-500/10 text-pink-400",
   },
   {
-    icon: Zap,
-    title: "Génération instantanée",
-    description:
-      "Titre, description, caractéristiques techniques — tout est généré en quelques secondes.",
-  },
-  {
-    icon: Download,
-    title: "Export PDF professionnel",
-    description:
-      "Téléchargez vos fiches en PDF prêt à imprimer ou à envoyer à vos clients et fournisseurs.",
-  },
-  {
-    icon: Pencil,
-    title: "Édition en ligne",
-    description:
-      "Modifiez chaque champ directement dans l'application. Ajustez le titre, la description ou les caractéristiques.",
+    name: "Luxe",
+    emoji: "👑",
+    example: "Pièce d'exception en chêne massif sélectionné. Artisanat d'excellence pour les intérieurs les plus exigeants.",
+    color: "border-yellow-500/30 bg-yellow-500/5",
+    badge: "bg-yellow-500/10 text-yellow-400",
   },
 ];
 
@@ -115,16 +106,16 @@ export default function HomePage() {
           </Link>
           <nav className="hidden items-center gap-6 md:flex">
             <a
-              href="#fonctionnalites"
-              className="text-sm text-muted-foreground hover:text-foreground"
-            >
-              Fonctionnalités
-            </a>
-            <a
-              href="#comment-ca-marche"
+              href="#comment"
               className="text-sm text-muted-foreground hover:text-foreground"
             >
               Comment ça marche
+            </a>
+            <a
+              href="#tons"
+              className="text-sm text-muted-foreground hover:text-foreground"
+            >
+              Tons
             </a>
             <a
               href="#tarifs"
@@ -160,27 +151,26 @@ export default function HomePage() {
             Propulsé par l&apos;intelligence artificielle
           </Badge>
           <h1 className="mx-auto max-w-4xl text-4xl font-bold tracking-tight md:text-6xl">
-            Créez vos fiches produit{" "}
-            <span className="text-primary">en 30 secondes</span>
+            Vos photos. Nos mots.{" "}
+            <span className="text-primary">Des fiches produit qui vendent.</span>
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground md:text-xl">
-            Uploadez une photo, l&apos;IA analyse votre produit et génère une
-            fiche complète : titre optimisé, description engageante,
-            caractéristiques détaillées et export PDF professionnel.
+            Uploadez une photo, obtenez une fiche produit professionnelle en 30 secondes.
+            Export PDF inclus. 3 crédits offerts à l&apos;inscription, sans carte bancaire.
           </p>
           <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
             <Button size="lg" className="text-base" asChild>
               <Link href="/inscription">
-                Commencer gratuitement
+                Essayer gratuitement
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
             </Button>
             <Button variant="outline" size="lg" className="text-base" asChild>
-              <a href="#fonctionnalites">Découvrir les fonctionnalités</a>
+              <a href="#comment">Voir comment ça marche</a>
             </Button>
           </div>
           <p className="mt-4 text-sm text-muted-foreground">
-            3 fiches offertes — Sans carte bancaire
+            3 crédits offerts — Sans carte bancaire
           </p>
         </div>
         {/* Blobs décoratifs */}
@@ -193,11 +183,11 @@ export default function HomePage() {
       <Separator />
 
       {/* Comment ça marche */}
-      <section id="comment-ca-marche" className="scroll-mt-20 bg-muted/30 py-20">
+      <section id="comment" className="scroll-mt-20 bg-muted/30 py-20">
         <div className="mx-auto max-w-6xl px-4">
           <div className="text-center">
             <h2 className="text-3xl font-bold md:text-4xl">
-              3 étapes, 30 secondes
+              3 étapes, c&apos;est tout.
             </h2>
             <p className="mt-4 text-lg text-muted-foreground">
               De la photo au PDF professionnel, sans effort
@@ -222,33 +212,70 @@ export default function HomePage() {
 
       <Separator />
 
-      {/* Fonctionnalités */}
-      <section id="fonctionnalites" className="scroll-mt-20 py-20">
+      {/* Choix du ton */}
+      <section id="tons" className="scroll-mt-20 py-20">
         <div className="mx-auto max-w-6xl px-4">
           <div className="text-center">
             <h2 className="text-3xl font-bold md:text-4xl">
-              Tout ce qu&apos;il faut pour vos fiches produit
+              Le bon ton pour votre marque
             </h2>
             <p className="mt-4 text-lg text-muted-foreground">
-              Plus qu&apos;un générateur de texte — un studio complet
+              Choisissez le style qui correspond à votre univers
             </p>
           </div>
-          <div className="mt-16 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-            {FEATURES.map((feature) => (
-              <Card key={feature.title} className="border-0 shadow-none">
-                <CardContent className="pt-6">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
-                    <feature.icon className="h-6 w-6 text-primary" />
-                  </div>
-                  <h3 className="mt-4 text-lg font-semibold">
-                    {feature.title}
-                  </h3>
-                  <p className="mt-2 text-sm text-muted-foreground">
-                    {feature.description}
-                  </p>
-                </CardContent>
-              </Card>
+          <div className="mt-16 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+            {TONES.map((tone) => (
+              <div key={tone.name} className={`rounded-xl border p-5 ${tone.color}`}>
+                <div className="mb-3 flex items-center gap-2">
+                  <span className="text-xl">{tone.emoji}</span>
+                  <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${tone.badge}`}>
+                    {tone.name}
+                  </span>
+                </div>
+                <p className="text-sm italic text-muted-foreground">
+                  &ldquo;{tone.example}&rdquo;
+                </p>
+              </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      <Separator />
+
+      {/* Avantages */}
+      <section id="avantages" className="scroll-mt-20 bg-muted/30 py-20">
+        <div className="mx-auto max-w-6xl px-4">
+          <div className="text-center">
+            <h2 className="text-3xl font-bold md:text-4xl">
+              Pourquoi FichFlow ?
+            </h2>
+            <p className="mt-4 text-lg text-muted-foreground">
+              Conçu pour les artisans, commerçants et e-commerçants
+            </p>
+          </div>
+          <div className="mt-16 grid gap-8 md:grid-cols-3">
+            <div className="text-center">
+              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+                <Zap className="h-6 w-6 text-primary" />
+              </div>
+              <h3 className="mb-2 text-xl font-semibold">Gain de temps massif</h3>
+              <p className="text-muted-foreground">Ce qui prenait 30 minutes se fait en 30 secondes. Libérez-vous de la rédaction.</p>
+            </div>
+            <div className="text-center">
+              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+                <Pencil className="h-6 w-6 text-primary" />
+              </div>
+              <h3 className="mb-2 text-xl font-semibold">Qualité rédactionnelle</h3>
+              <p className="text-muted-foreground">Des textes optimisés pour convaincre vos clients. Titre, description, caractéristiques — tout est pensé pour vendre.</p>
+            </div>
+            <div className="text-center">
+              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+                <Smartphone className="h-6 w-6 text-primary" />
+              </div>
+              <h3 className="mb-2 text-xl font-semibold">100% mobile</h3>
+              <p className="text-muted-foreground">Créez vos fiches depuis n&apos;importe où, sur votre téléphone. Interface optimisée pour tous les écrans.</p>
+            </div>
           </div>
         </div>
       </section>
@@ -386,16 +413,15 @@ export default function HomePage() {
       <section className="py-20">
         <div className="mx-auto max-w-3xl px-4 text-center">
           <h2 className="text-3xl font-bold md:text-4xl">
-            Prêt à gagner du temps ?
+            Créez votre première fiche gratuitement
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">
-            Rejoignez FichFlow et créez vos fiches produit professionnelles en
-            quelques clics. 3 fiches offertes pour essayer.
+            3 crédits offerts. Aucune carte bancaire requise.
           </p>
           <div className="mt-8">
             <Button size="lg" className="text-base" asChild>
               <Link href="/inscription">
-                Créer mon compte gratuit
+                Commencer maintenant
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
             </Button>
