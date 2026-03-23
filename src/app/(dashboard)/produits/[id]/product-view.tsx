@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Save, FileDown, Loader2, Pencil, Check, X, Trash2 } from "lucide-react";
+import { ArrowLeft, Save, FileDown, Loader2, Pencil, Check, X, Trash2, Copy } from "lucide-react";
 import { toast } from "sonner";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -27,11 +27,29 @@ interface ProductWithExports extends Product {
   exports: ExportHistory[];
 }
 
+const TONE_COLORS: Record<string, string> = {
+  PROFESSIONNEL: "bg-blue-500/10 text-blue-500 border-blue-500/20",
+  DECONTRACTE:   "bg-green-500/10 text-green-500 border-green-500/20",
+  SENSUEL:       "bg-pink-500/10 text-pink-500 border-pink-500/20",
+  LUXE:          "bg-yellow-500/10 text-yellow-600 border-yellow-500/20",
+  PERSONNALISE:  "bg-purple-500/10 text-purple-500 border-purple-500/20",
+};
+
+const TONE_LABELS: Record<string, string> = {
+  PROFESSIONNEL: "💼 Professionnel",
+  DECONTRACTE:   "😎 Décontracté",
+  SENSUEL:       "✨ Sensuel",
+  LUXE:          "👑 Luxe",
+  PERSONNALISE:  "🎨 Personnalisé",
+};
+
 interface ProductViewProps {
   product: ProductWithExports;
+  plan?: string;
 }
 
-export function ProductView({ product }: ProductViewProps) {
+export function ProductView({ product, plan = "FREE" }: ProductViewProps) {
+  const canExportText = plan === "ARTISAN" || plan === "PRO";
   const router = useRouter();
 
   // Champs éditables (custom prend la priorité sur generated)
@@ -196,10 +214,58 @@ export function ProductView({ product }: ProductViewProps) {
               Sauvegarder
             </Button>
           )}
+          {/* Copier le texte */}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              const text = [
+                title,
+                "",
+                description,
+                "",
+                Object.entries(characteristics).map(([k, v]) => `${k} : ${v}`).join("\n"),
+              ].join("\n");
+              navigator.clipboard.writeText(text);
+              toast.success("Texte copié dans le presse-papier.");
+            }}
+          >
+            <Copy className="mr-2 h-4 w-4" />
+            Copier
+          </Button>
+
+          {/* Export texte (Artisan+) */}
+          {canExportText && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                const text = [
+                  `# ${title}`,
+                  "",
+                  description,
+                  "",
+                  "## Caractéristiques",
+                  Object.entries(characteristics).map(([k, v]) => `- ${k} : ${v}`).join("\n"),
+                ].join("\n");
+                const blob = new Blob([text], { type: "text/plain" });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = `${product.name.replace(/\s+/g, "-")}.txt`;
+                a.click();
+                URL.revokeObjectURL(url);
+                toast.success("Fichier texte téléchargé.");
+              }}
+            >
+              <FileDown className="mr-2 h-4 w-4" />
+              Export texte
+            </Button>
+          )}
+
           <Button
             onClick={handleExportPdf}
             disabled={exporting}
-            variant="outline"
             size="sm"
           >
             {exporting ? (
@@ -234,9 +300,11 @@ export function ProductView({ product }: ProductViewProps) {
                   <strong>Prix :</strong> {Number(product.price).toFixed(2)}€
                 </p>
               )}
-              <p>
-                <strong>Ton :</strong> {product.tone.toLowerCase()}
-              </p>
+              <div className="mt-2">
+                <span className={`inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium ${TONE_COLORS[product.tone] ?? ""}`}>
+                  {TONE_LABELS[product.tone] ?? product.tone}
+                </span>
+              </div>
             </CardContent>
           </Card>
         </div>

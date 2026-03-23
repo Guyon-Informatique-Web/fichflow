@@ -34,5 +34,5 @@ export default async function ProduitPage({ params }: Props) {
     notFound();
   }
 
-  return <ProductView product={product} />;
+  return <ProductView product={product} plan={user.plan} />;
 }
