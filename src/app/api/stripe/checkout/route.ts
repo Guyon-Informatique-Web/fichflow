@@ -134,9 +134,10 @@ export const POST = withErrorHandling(async (request) => {
       { status: 400 }
     );
   } catch (error) {
-    console.error("Erreur Stripe checkout:", error);
+    const msg = error instanceof Error ? error.message : String(error);
+    console.error("Erreur Stripe checkout:", msg);
     return NextResponse.json(
-      { error: "Erreur lors de la création du paiement." },
+      { error: "Erreur lors de la création du paiement.", detail: msg },
       { status: 500 }
     );
   }
