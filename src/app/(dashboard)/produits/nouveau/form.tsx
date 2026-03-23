@@ -240,24 +240,24 @@ export function NouveauProduitForm({ credits, isAdmin = false, canMultiLang = fa
       {/* Ton */}
       <div className="space-y-2">
         <Label>Ton de la description</Label>
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-          {TONES.filter((t) => t.value !== "PERSONNALISE").map((t) => (
-            <Card
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+          {([
+            { value: "PROFESSIONNEL", label: "💼 Professionnel", desc: "Ton sobre et expert", color: "border-blue-500/30 bg-blue-500/5", activeColor: "border-blue-500 bg-blue-500/10 ring-1 ring-blue-500/30", badge: "text-blue-400" },
+            { value: "SENSUEL", label: "✨ Sensuel", desc: "Ton doux et séduisant", color: "border-pink-500/30 bg-pink-500/5", activeColor: "border-pink-500 bg-pink-500/10 ring-1 ring-pink-500/30", badge: "text-pink-400" },
+            { value: "DECONTRACTE", label: "😎 Décontracté", desc: "Ton léger et accessible", color: "border-green-500/30 bg-green-500/5", activeColor: "border-green-500 bg-green-500/10 ring-1 ring-green-500/30", badge: "text-green-400" },
+            { value: "LUXE", label: "👑 Luxe", desc: "Haut de gamme et raffiné", color: "border-yellow-500/30 bg-yellow-500/5", activeColor: "border-yellow-500 bg-yellow-500/10 ring-1 ring-yellow-500/30", badge: "text-yellow-400" },
+          ]).map((t) => (
+            <button
               key={t.value}
-              className={`cursor-pointer transition-colors ${
-                tone === t.value
-                  ? "border-primary bg-primary/5"
-                  : "hover:border-primary/50"
-              }`}
+              type="button"
               onClick={() => setTone(t.value)}
+              className={`rounded-xl border p-3 text-center transition-all ${
+                tone === t.value ? t.activeColor : `${t.color} hover:opacity-80`
+              }`}
             >
-              <CardContent className="p-3 text-center">
-                <p className="text-sm font-medium">{t.label}</p>
-                <p className="text-xs text-muted-foreground">
-                  {t.description}
-                </p>
-              </CardContent>
-            </Card>
+              <p className={`text-sm font-semibold ${tone === t.value ? t.badge : ""}`}>{t.label}</p>
+              <p className="mt-0.5 text-xs text-muted-foreground">{t.desc}</p>
+            </button>
           ))}
         </div>
       </div>
