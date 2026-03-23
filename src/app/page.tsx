@@ -181,38 +181,51 @@ export default function HomePage() {
         </div>
         {/* Mockup carte produit */}
         <div className="mx-auto mt-16 max-w-2xl px-4">
-          <div className="relative rounded-2xl border border-primary/20 bg-card/50 p-6 shadow-2xl backdrop-blur-sm">
+          <div className="relative rounded-2xl border border-primary/30 bg-[#111827] p-6 shadow-[0_0_60px_rgba(0,210,150,0.08)] ring-1 ring-primary/10">
             {/* Badge IA */}
-            <div className="mb-4 flex items-center gap-2">
-              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-xs text-primary-foreground">✓</span>
-              <span className="text-xs font-medium text-primary">Généré par FichFlow IA</span>
+            <div className="mb-5 flex items-center gap-2">
+              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">✓</span>
+              <span className="text-xs font-semibold text-primary">Généré par FichFlow IA</span>
+              <span className="ml-auto rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary">Professionnel</span>
             </div>
-            {/* Contenu mockup */}
-            <div className="grid gap-4 sm:grid-cols-[120px_1fr]">
+
+            <div className="grid gap-5 sm:grid-cols-[130px_1fr]">
               {/* Photo placeholder */}
-              <div className="flex h-28 w-full items-center justify-center rounded-lg bg-muted sm:h-full">
-                <Camera className="h-8 w-8 text-muted-foreground/40" />
+              <div className="flex h-32 w-full items-center justify-center rounded-xl border border-white/5 bg-white/5 sm:h-full">
+                <Camera className="h-7 w-7 text-white/20" />
               </div>
-              {/* Texte */}
-              <div className="space-y-2">
-                <div className="h-5 w-3/4 rounded bg-foreground/10" />
-                <div className="h-3 w-full rounded bg-muted-foreground/20" />
-                <div className="h-3 w-5/6 rounded bg-muted-foreground/20" />
-                <div className="h-3 w-4/6 rounded bg-muted-foreground/20" />
-                <div className="mt-3 grid grid-cols-2 gap-2">
-                  <div className="h-3 w-full rounded bg-muted-foreground/15" />
-                  <div className="h-3 w-full rounded bg-muted-foreground/15" />
-                  <div className="h-3 w-full rounded bg-muted-foreground/15" />
-                  <div className="h-3 w-3/4 rounded bg-muted-foreground/15" />
+
+              {/* Contenu texte réel */}
+              <div>
+                <p className="text-sm font-bold text-white">Sac cabas en cuir grainé camel</p>
+                <p className="mt-2 text-xs leading-relaxed text-white/50">
+                  Un sac intemporel alliant élégance et fonctionnalité. Sa matière en cuir grainé de qualité supérieure lui confère une texture subtile et une durabilité exceptionnelle.
+                </p>
+                <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1.5">
+                  {[
+                    ["Matière", "Cuir grainé"],
+                    ["Couleur", "Camel"],
+                    ["Dimensions", "38 × 28 × 12 cm"],
+                    ["Fermeture", "Zip + bouton pression"],
+                  ].map(([k, v]) => (
+                    <div key={k} className="flex items-baseline gap-1">
+                      <span className="text-[10px] text-white/35">{k} :</span>
+                      <span className="text-[10px] font-medium text-white/70">{v}</span>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
+
             {/* Footer mockup */}
-            <div className="mt-4 flex items-center justify-between border-t border-border/50 pt-4">
-              <span className="text-xs text-muted-foreground">Ton : Professionnel</span>
+            <div className="mt-5 flex items-center justify-between border-t border-white/5 pt-4">
+              <div className="flex items-center gap-1.5">
+                <span className="h-1.5 w-1.5 rounded-full bg-primary" />
+                <span className="text-[11px] text-white/40">1 crédit consommé</span>
+              </div>
               <div className="flex gap-2">
-                <div className="h-7 w-20 rounded-md bg-primary/20" />
-                <div className="h-7 w-16 rounded-md bg-primary" />
+                <button className="rounded-lg border border-white/10 px-3 py-1.5 text-xs text-white/50 hover:border-white/20">Modifier</button>
+                <button className="rounded-lg bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground">Exporter PDF</button>
               </div>
             </div>
           </div>
