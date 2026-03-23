@@ -1,12 +1,13 @@
 "use client"
 
 import { useState } from "react"
-import { Palette, Loader2, Lock } from "lucide-react"
+import { Palette, Loader2, Lock, FileText, Sparkles } from "lucide-react"
 import { toast } from "sonner"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import Link from "next/link"
 
 interface BrandingSettingsProps {
@@ -23,7 +24,8 @@ interface BrandingSettingsProps {
 export function BrandingSettings({ plan, isAdmin = false, company }: BrandingSettingsProps) {
   const canBrand = plan === "ARTISAN" || plan === "PRO" || isAdmin
   const [name, setName] = useState(company?.name || "")
-  const [primaryColor, setPrimaryColor] = useState(company?.primaryColor || "#0a0a0a")
+  const [primaryColor, setPrimaryColor] = useState(company?.primaryColor || "#00d296")
+  const [defaultTone, setDefaultTone] = useState("PROFESSIONNEL")
   const [saving, setSaving] = useState(false)
 
   async function handleSave() {
@@ -31,7 +33,6 @@ export function BrandingSettings({ plan, isAdmin = false, company }: BrandingSet
       toast.error("Le nom commercial est requis.")
       return
     }
-
     setSaving(true)
     try {
       const response = await fetch("/api/company", {
@@ -39,12 +40,10 @@ export function BrandingSettings({ plan, isAdmin = false, company }: BrandingSet
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name: name.trim(), primaryColor }),
       })
-
       if (!response.ok) {
         const data = await response.json()
         throw new Error(data.error || "Erreur lors de la sauvegarde.")
       }
-
       toast.success("Paramètres sauvegardés.")
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Erreur inattendue.")
@@ -65,11 +64,9 @@ export function BrandingSettings({ plan, isAdmin = false, company }: BrandingSet
             <div className="mb-4 rounded-full bg-muted p-4">
               <Lock className="h-8 w-8 text-muted-foreground" />
             </div>
-            <h2 className="mb-2 text-lg font-semibold">
-              Branding personnalisé
-            </h2>
+            <h2 className="mb-2 text-lg font-semibold">Branding personnalisé</h2>
             <p className="mb-6 max-w-sm text-sm text-muted-foreground">
-              Ajoutez votre logo et vos couleurs sur vos fiches produit PDF.
+              Ajoutez votre logo et couleurs sur vos fiches produit PDF.
               Disponible avec les plans Artisan et Pro.
             </p>
             <Button asChild>
@@ -88,14 +85,15 @@ export function BrandingSettings({ plan, isAdmin = false, company }: BrandingSet
         <p className="text-muted-foreground">Personnalisez vos fiches produit</p>
       </div>
 
+      {/* Branding */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Palette className="h-5 w-5" />
-            Branding
-          </CardTitle>
+          <div className="flex items-center gap-2">
+            <Palette className="h-4 w-4 text-muted-foreground" />
+            <CardTitle>Branding PDF</CardTitle>
+          </div>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-5">
           <div className="space-y-2">
             <Label htmlFor="company-name">Nom commercial</Label>
             <Input
@@ -105,42 +103,87 @@ export function BrandingSettings({ plan, isAdmin = false, company }: BrandingSet
               placeholder="Mon Entreprise"
             />
             <p className="text-xs text-muted-foreground">
-              Affiché sur vos PDFs à la place de &quot;FichFlow&quot;
+              Affiché sur vos PDFs à la place de &ldquo;FichFlow&rdquo;
             </p>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="primary-color">Couleur principale</Label>
+            <Label>Couleur principale</Label>
             <div className="flex items-center gap-3">
               <input
-                id="primary-color"
                 type="color"
                 value={primaryColor}
                 onChange={(e) => setPrimaryColor(e.target.value)}
-                className="h-10 w-14 cursor-pointer rounded border"
+                className="h-10 w-14 cursor-pointer rounded-md border"
               />
               <Input
                 value={primaryColor}
                 onChange={(e) => setPrimaryColor(e.target.value)}
-                className="w-32"
-                placeholder="#0a0a0a"
+                className="w-32 font-mono text-sm"
+                placeholder="#00d296"
               />
+              {/* Aperçu */}
+              <div
+                className="flex h-10 flex-1 items-center justify-center rounded-md text-xs font-medium text-white"
+                style={{ backgroundColor: primaryColor }}
+              >
+                Aperçu
+              </div>
             </div>
             <p className="text-xs text-muted-foreground">
               Utilisée pour les titres et accents sur vos PDFs
             </p>
           </div>
 
+          {/* Prévisualisation mini PDF */}
+          <div className="rounded-lg border bg-white p-4 text-black">
+            <div className="mb-2 flex items-center gap-2">
+              <FileText className="h-4 w-4" style={{ color: primaryColor }} />
+              <span className="text-sm font-bold" style={{ color: primaryColor }}>
+                {name || "Votre Entreprise"}
+              </span>
+            </div>
+            <div className="h-1.5 w-full rounded-full" style={{ backgroundColor: primaryColor }} />
+            <div className="mt-2 space-y-1">
+              <div className="h-2 w-3/4 rounded bg-gray-200" />
+              <div className="h-2 w-1/2 rounded bg-gray-100" />
+            </div>
+            <p className="mt-2 text-[10px] text-gray-400">Aperçu de votre en-tête PDF</p>
+          </div>
+
           <Button onClick={handleSave} disabled={saving}>
-            {saving ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Sauvegarde...
-              </>
-            ) : (
-              "Sauvegarder"
-            )}
+            {saving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+            Sauvegarder le branding
           </Button>
+        </CardContent>
+      </Card>
+
+      {/* Ton par défaut */}
+      <Card>
+        <CardHeader>
+          <div className="flex items-center gap-2">
+            <Sparkles className="h-4 w-4 text-muted-foreground" />
+            <CardTitle>Ton par défaut</CardTitle>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <p className="text-sm text-muted-foreground">
+            Ton présélectionné lors de la création d&apos;une nouvelle fiche
+          </p>
+          <Select value={defaultTone} onValueChange={setDefaultTone}>
+            <SelectTrigger className="w-48">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="PROFESSIONNEL">💼 Professionnel</SelectItem>
+              <SelectItem value="DECONTRACTE">😎 Décontracté</SelectItem>
+              <SelectItem value="SENSUEL">✨ Sensuel</SelectItem>
+              <SelectItem value="LUXE">👑 Luxe</SelectItem>
+            </SelectContent>
+          </Select>
+          <p className="text-xs text-muted-foreground">
+            Vous pourrez toujours changer le ton lors de la création.
+          </p>
         </CardContent>
       </Card>
     </div>

@@ -36,6 +36,9 @@ export default async function HistoriquePage() {
     orderBy: { createdAt: "desc" },
   });
 
+  const totalIn = transactions.filter(t => t.amount > 0).reduce((s, t) => s + t.amount, 0);
+  const totalOut = transactions.filter(t => t.amount < 0).reduce((s, t) => s + t.amount, 0);
+
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
@@ -48,10 +51,33 @@ export default async function HistoriquePage() {
         <div>
           <h1 className="text-3xl font-bold">Historique des crédits</h1>
           <p className="text-muted-foreground">
-            Toutes vos transactions de crédits
+            {transactions.length} transaction{transactions.length !== 1 ? "s" : ""}
           </p>
         </div>
       </div>
+
+      {transactions.length > 0 && (
+        <div className="grid gap-4 sm:grid-cols-3">
+          <Card>
+            <CardContent className="py-4">
+              <p className="text-xs text-muted-foreground">Crédits reçus</p>
+              <p className="text-2xl font-bold text-green-600 dark:text-green-400">+{totalIn}</p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="py-4">
+              <p className="text-xs text-muted-foreground">Crédits utilisés</p>
+              <p className="text-2xl font-bold text-red-600 dark:text-red-400">{totalOut}</p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="py-4">
+              <p className="text-xs text-muted-foreground">Solde net</p>
+              <p className="text-2xl font-bold">{totalIn + totalOut}</p>
+            </CardContent>
+          </Card>
+        </div>
+      )}
 
       {transactions.length === 0 ? (
         <Card className="border-dashed">
