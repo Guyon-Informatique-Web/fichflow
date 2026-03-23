@@ -17,7 +17,10 @@ import { Eye, EyeOff } from "lucide-react";
 import { loginAction } from "../actions";
 
 export default function ConnexionPage() {
-  const [error, setError] = useState<string | null>(null);
+  const params = typeof window !== "undefined" ? new URLSearchParams(window.location.search) : null;
+  const [error, setError] = useState<string | null>(
+    params?.get("error") === "link_expired" ? "Ce lien a expiré. Faites une nouvelle demande." : null
+  );
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 

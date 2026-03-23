@@ -12,16 +12,17 @@ export async function forgotPasswordAction(formData: FormData): Promise<ActionRe
   }
 
   const supabase = await createClient();
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://fichflow.vercel.app";
 
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/reset-password`,
+    // Supabase appelle ce callback avec ?code=xxx&type=recovery
+    redirectTo: `${appUrl}/api/auth/callback?type=recovery`,
   });
 
   if (error) {
     console.error("Reset password error:", error.message);
-    // Ne pas révéler si l'email existe ou non
+    // Ne pas révéler si l'email existe ou non — toujours retourner succès
   }
 
-  // Toujours retourner succès (sécurité)
   return {};
 }
