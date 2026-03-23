@@ -190,10 +190,13 @@ export default function HomePage() {
             </div>
 
             <div className="grid gap-5 sm:grid-cols-[130px_1fr]">
-              {/* Photo placeholder */}
-              <div className="flex h-32 w-full items-center justify-center rounded-xl border border-white/5 bg-white/5 sm:h-full">
-                <Camera className="h-7 w-7 text-white/20" />
-              </div>
+              {/* Photo produit */}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=200&h=200&fit=crop&auto=format"
+                alt="Exemple sac en cuir"
+                className="h-32 w-full rounded-xl object-cover sm:h-full"
+              />
 
               {/* Contenu texte réel */}
               <div>
@@ -340,54 +343,6 @@ export default function HomePage() {
 
       <Separator />
 
-      {/* FAQ */}
-      <section id="faq" className="scroll-mt-20 bg-muted/30 py-20">
-        <div className="mx-auto max-w-3xl px-4">
-          <div className="text-center">
-            <h2 className="text-3xl font-bold md:text-4xl">Questions fréquentes</h2>
-            <p className="mt-4 text-lg text-muted-foreground">Tout ce que vous devez savoir</p>
-          </div>
-          <div className="mt-12 space-y-4">
-            {[
-              {
-                q: "C'est quoi un crédit ?",
-                a: "1 crédit = 1 fiche produit générée. Vous consommez un crédit à chaque génération. Les crédits n'expirent jamais."
-              },
-              {
-                q: "Quelles photos donnent les meilleurs résultats ?",
-                a: "Des photos bien éclairées, fond neutre de préférence. Le produit doit être clairement visible. Vous pouvez uploader jusqu'à 3 photos pour enrichir la description."
-              },
-              {
-                q: "Puis-je modifier la fiche générée ?",
-                a: "Oui, chaque champ est entièrement modifiable dans l'application avant l'export. Vous pouvez ajuster le titre, la description, les caractéristiques et les attributs."
-              },
-              {
-                q: "Quels formats d'export sont disponibles ?",
-                a: "Export PDF professionnel disponible sur tous les plans. L'export texte brut (copier-coller direct) est disponible à partir du plan Artisan."
-              },
-              {
-                q: "Je peux changer de plan à tout moment ?",
-                a: "Oui, vous pouvez passer à un plan supérieur ou inférieur à tout moment. La facturation est au mois, sans engagement."
-              },
-              {
-                q: "Mes données et photos sont-elles conservées ?",
-                a: "Vos fiches générées sont sauvegardées dans votre compte. Les photos uploadées sont utilisées uniquement pour la génération et ne sont pas revendues."
-              },
-            ].map(({ q, a }) => (
-              <details key={q} className="group rounded-xl border bg-background p-5 open:border-primary/30">
-                <summary className="flex cursor-pointer items-center justify-between gap-4 font-medium list-none">
-                  {q}
-                  <span className="shrink-0 text-muted-foreground transition-transform group-open:rotate-180">▾</span>
-                </summary>
-                <p className="mt-3 text-sm text-muted-foreground">{a}</p>
-              </details>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <Separator />
-
       {/* Tarifs */}
       <section id="tarifs" className="scroll-mt-20 py-20">
         <div className="mx-auto max-w-6xl px-4">
@@ -469,6 +424,36 @@ export default function HomePage() {
                 </div>
               ))}
             </div>
+          </div>
+        </div>
+      </section>
+
+      <Separator />
+
+      {/* FAQ */}
+      <section id="faq" className="scroll-mt-20 bg-muted/30 py-20">
+        <div className="mx-auto max-w-3xl px-4">
+          <div className="text-center">
+            <h2 className="text-3xl font-bold md:text-4xl">Questions fréquentes</h2>
+            <p className="mt-4 text-lg text-muted-foreground">Tout ce que vous devez savoir</p>
+          </div>
+          <div className="mt-12 space-y-4">
+            {[
+              { q: "C'est quoi un crédit ?", a: "1 crédit = 1 fiche produit générée. Vous consommez un crédit à chaque génération. Les crédits n'expirent jamais." },
+              { q: "Quelles photos donnent les meilleurs résultats ?", a: "Des photos bien éclairées, fond neutre de préférence. Le produit doit être clairement visible. Vous pouvez uploader jusqu'à 3 photos pour enrichir la description." },
+              { q: "Puis-je modifier la fiche générée ?", a: "Oui, chaque champ est entièrement modifiable dans l'application avant l'export. Vous pouvez ajuster le titre, la description, les caractéristiques et les attributs." },
+              { q: "Quels formats d'export sont disponibles ?", a: "Export PDF professionnel disponible sur tous les plans. L'export texte brut (copier-coller direct) est disponible à partir du plan Artisan." },
+              { q: "Je peux changer de plan à tout moment ?", a: "Oui, vous pouvez passer à un plan supérieur ou inférieur à tout moment. La facturation est au mois, sans engagement." },
+              { q: "Mes données et photos sont-elles conservées ?", a: "Vos fiches générées sont sauvegardées dans votre compte. Les photos uploadées sont utilisées uniquement pour la génération et ne sont pas revendues." },
+            ].map(({ q, a }) => (
+              <details key={q} className="group rounded-xl border bg-background p-5 open:border-primary/30">
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-medium">
+                  {q}
+                  <span className="shrink-0 text-muted-foreground transition-transform group-open:rotate-180">▾</span>
+                </summary>
+                <p className="mt-3 text-sm text-muted-foreground">{a}</p>
+              </details>
+            ))}
           </div>
         </div>
       </section>
