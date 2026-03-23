@@ -107,29 +107,55 @@ export function BrandingSettings({ plan, isAdmin = false, company }: BrandingSet
             </p>
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-3">
             <Label>Couleur principale</Label>
-            <div className="flex items-center gap-3">
-              <input
-                type="color"
-                value={primaryColor}
-                onChange={(e) => setPrimaryColor(e.target.value)}
-                className="h-10 w-14 cursor-pointer rounded-md border"
-              />
-              <Input
-                value={primaryColor}
-                onChange={(e) => setPrimaryColor(e.target.value)}
-                className="w-32 font-mono text-sm"
-                placeholder="#00d296"
-              />
-              {/* Aperçu */}
-              <div
-                className="flex h-10 flex-1 items-center justify-center rounded-md text-xs font-medium text-white"
-                style={{ backgroundColor: primaryColor }}
-              >
-                Aperçu
-              </div>
+            {/* Palette prédéfinie */}
+            <div className="flex flex-wrap gap-2">
+              {[
+                { hex: "#00d296", name: "Vert" },
+                { hex: "#3b82f6", name: "Bleu" },
+                { hex: "#8b5cf6", name: "Violet" },
+                { hex: "#f59e0b", name: "Ambre" },
+                { hex: "#ef4444", name: "Rouge" },
+                { hex: "#ec4899", name: "Rose" },
+                { hex: "#14b8a6", name: "Teal" },
+                { hex: "#f97316", name: "Orange" },
+                { hex: "#0f172a", name: "Noir" },
+                { hex: "#6b7280", name: "Gris" },
+              ].map(({ hex, name }) => (
+                <button
+                  key={hex}
+                  type="button"
+                  title={name}
+                  onClick={() => setPrimaryColor(hex)}
+                  className={`h-8 w-8 rounded-full border-2 transition-transform hover:scale-110 ${
+                    primaryColor.toLowerCase() === hex ? "border-foreground scale-110" : "border-transparent"
+                  }`}
+                  style={{ backgroundColor: hex }}
+                />
+              ))}
             </div>
+            {/* Input hex avancé */}
+            <details className="group">
+              <summary className="cursor-pointer text-xs text-muted-foreground hover:text-foreground list-none flex items-center gap-1">
+                <span className="group-open:hidden">▶ Code couleur personnalisé</span>
+                <span className="hidden group-open:inline">▼ Code couleur personnalisé</span>
+              </summary>
+              <div className="mt-2 flex items-center gap-3">
+                <input
+                  type="color"
+                  value={primaryColor}
+                  onChange={(e) => setPrimaryColor(e.target.value)}
+                  className="h-10 w-14 cursor-pointer rounded-md border"
+                />
+                <Input
+                  value={primaryColor}
+                  onChange={(e) => setPrimaryColor(e.target.value)}
+                  className="w-32 font-mono text-sm"
+                  placeholder="#00d296"
+                />
+              </div>
+            </details>
             <p className="text-xs text-muted-foreground">
               Utilisée pour les titres et accents sur vos PDFs
             </p>
