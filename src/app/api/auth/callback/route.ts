@@ -7,7 +7,10 @@ export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get("code");
   const type = searchParams.get("type");
-  const next = searchParams.get("next") ?? "/dashboard";
+  const nextParam = searchParams.get("next");
+
+  // Si type=recovery (reset password), toujours aller vers /reset-password
+  const next = nextParam ?? (type === "recovery" ? "/reset-password" : "/dashboard");
 
   if (code) {
     const supabase = await createClient();
