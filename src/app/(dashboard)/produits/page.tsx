@@ -2,12 +2,14 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
-import { PlusCircle, Package, FileDown, CheckCircle2, Clock } from "lucide-react";
+import { PlusCircle, Package, FileDown, CheckCircle2, Clock, Layers } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { getAuthUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { PLANS } from "@/config/plans";
+import type { PlanType } from "@/config/plans";
 
 export const metadata: Metadata = {
   title: "Mes produits",
@@ -23,6 +25,7 @@ const TONE_LABELS: Record<string, string> = {
 
 export default async function ProduitsPage() {
   const user = await getAuthUser();
+  const canBulk = user.plan === "PRO" || user.role === "ADMIN";
 
   const products = await prisma.product.findMany({
     where: { userId: user.id },
@@ -46,12 +49,22 @@ export default async function ProduitsPage() {
             {drafts > 0 && ` · ${drafts} brouillon${drafts !== 1 ? "s" : ""}`}
           </p>
         </div>
-        <Button asChild>
-          <Link href="/produits/nouveau" className="gap-2">
-            <PlusCircle className="h-4 w-4" />
-            Nouvelle fiche
-          </Link>
-        </Button>
+        <div className="flex gap-2">
+          {canBulk && (
+            <Button variant="outline" asChild>
+              <Link href="/produits/bulk" className="gap-2">
+                <Layers className="h-4 w-4" />
+                Générer en lot
+              </Link>
+            </Button>
+          )}
+          <Button asChild>
+            <Link href="/produits/nouveau" className="gap-2">
+              <PlusCircle className="h-4 w-4" />
+              Nouvelle fiche
+            </Link>
+          </Button>
+        </div>
       </div>
 
       {products.length === 0 ? (

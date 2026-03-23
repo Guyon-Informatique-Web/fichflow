@@ -8,6 +8,7 @@ import { getAuthUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { PLANS } from "@/config/plans";
 import type { PlanType } from "@/config/plans";
+import { OnboardingModal } from "@/components/dashboard/onboarding-modal";
 
 export const metadata: Metadata = {
   title: "Dashboard",
@@ -74,6 +75,7 @@ export default async function DashboardPage() {
 
   return (
     <div className="space-y-6">
+      <OnboardingModal isNewUser={productCount === 0} />
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>

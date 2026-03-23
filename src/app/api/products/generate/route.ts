@@ -69,6 +69,7 @@ export const POST = withErrorHandling(async (request) => {
     const price = formData.get("price") as string | null;
     const notes = formData.get("notes") as string | null;
     const tone = (formData.get("tone") as string) || "PROFESSIONNEL";
+    const language = (formData.get("language") as string) || "FR";
     const photos = formData.getAll("photos") as File[];
 
     // Validation
@@ -185,11 +186,12 @@ export const POST = withErrorHandling(async (request) => {
       PERSONNALISE: "personnalisé",
     };
 
-    const systemPrompt = `Tu es un expert en rédaction de fiches produit e-commerce.
-Tu génères des fiches complètes, optimisées SEO, en français.
-Tu réponds UNIQUEMENT en JSON valide, sans markdown ni texte avant/après.`;
+    const langLabel = language === "EN" ? "English" : "French";
+    const systemPrompt = `You are an expert in e-commerce product sheet copywriting.
+You generate complete, SEO-optimized product sheets in ${langLabel}.
+You respond ONLY with valid JSON, no markdown or text before/after.`;
 
-    const userPrompt = `Analyse cette/ces photo(s) de produit et génère une fiche produit complète.
+    const userPrompt = `Analyze this/these product photo(s) and generate a complete product sheet in ${langLabel}.
 
 Informations fournies :
 - Nom du produit : ${name}

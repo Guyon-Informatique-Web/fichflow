@@ -29,13 +29,15 @@ import {
 interface NouveauProduitFormProps {
   credits: number;
   isAdmin?: boolean;
+  canMultiLang?: boolean;
 }
 
-export function NouveauProduitForm({ credits, isAdmin = false }: NouveauProduitFormProps) {
+export function NouveauProduitForm({ credits, isAdmin = false, canMultiLang = false }: NouveauProduitFormProps) {
   const router = useRouter();
   const [files, setFiles] = useState<File[]>([]);
   const [previews, setPreviews] = useState<string[]>([]);
   const [tone, setTone] = useState("PROFESSIONNEL");
+  const [language, setLanguage] = useState("FR");
   const [category, setCategory] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -98,6 +100,7 @@ export function NouveauProduitForm({ credits, isAdmin = false }: NouveauProduitF
 
       // Ajouter le ton (géré par le state, pas par un input natif)
       formData.set("tone", tone);
+      formData.set("language", language);
       formData.set("category", category);
 
       const response = await fetch("/api/products/generate", {
@@ -258,6 +261,31 @@ export function NouveauProduitForm({ credits, isAdmin = false }: NouveauProduitF
           ))}
         </div>
       </div>
+
+      {/* Langue (Pro uniquement) */}
+      {canMultiLang && (
+        <div className="space-y-2">
+          <Label>Langue de la fiche</Label>
+          <div className="flex gap-3">
+            {[
+              { value: "FR", label: "🇫🇷 Français" },
+              { value: "EN", label: "🇬🇧 English" },
+            ].map((l) => (
+              <Card
+                key={l.value}
+                className={`cursor-pointer flex-1 transition-colors ${
+                  language === l.value ? "border-primary bg-primary/5" : "hover:border-primary/50"
+                }`}
+                onClick={() => setLanguage(l.value)}
+              >
+                <CardContent className="p-3 text-center">
+                  <p className="text-sm font-medium">{l.label}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Notes supplémentaires */}
       <div className="space-y-2">
