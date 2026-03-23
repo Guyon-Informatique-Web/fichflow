@@ -15,8 +15,7 @@ export async function forgotPasswordAction(formData: FormData): Promise<ActionRe
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://fichflow.vercel.app";
 
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    // Supabase appelle ce callback avec ?code=xxx&type=recovery
-    redirectTo: `${appUrl}/api/auth/callback?type=recovery`,
+    redirectTo: `${appUrl}/api/auth/callback?next=/reset-password`,
   });
 
   if (error) {
