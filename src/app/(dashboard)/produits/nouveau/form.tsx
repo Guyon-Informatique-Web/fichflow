@@ -266,22 +266,24 @@ export function NouveauProduitForm({ credits, isAdmin = false, canMultiLang = fa
       {canMultiLang && (
         <div className="space-y-2">
           <Label>Langue de la fiche</Label>
-          <div className="flex gap-3">
+          <div className="flex gap-2">
             {[
-              { value: "FR", label: "🇫🇷 Français" },
-              { value: "EN", label: "🇬🇧 English" },
+              { value: "FR", flag: "🇫🇷", label: "Français" },
+              { value: "EN", flag: "🇬🇧", label: "English" },
             ].map((l) => (
-              <Card
+              <button
                 key={l.value}
-                className={`cursor-pointer flex-1 transition-colors ${
-                  language === l.value ? "border-primary bg-primary/5" : "hover:border-primary/50"
-                }`}
+                type="button"
                 onClick={() => setLanguage(l.value)}
+                className={`flex items-center gap-2 rounded-lg border px-3 py-2 text-sm font-medium transition-colors ${
+                  language === l.value
+                    ? "border-primary bg-primary/5 text-primary"
+                    : "border-border hover:border-primary/50"
+                }`}
               >
-                <CardContent className="p-3 text-center">
-                  <p className="text-sm font-medium">{l.label}</p>
-                </CardContent>
-              </Card>
+                <span className="text-base">{l.flag}</span>
+                {l.label}
+              </button>
             ))}
           </div>
         </div>
