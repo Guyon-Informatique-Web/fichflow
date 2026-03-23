@@ -43,7 +43,8 @@ export default async function DashboardPage() {
       take: 5,
       select: {
         id: true,
-        title: true,
+        name: true,
+        generatedTitle: true,
         tone: true,
         createdAt: true,
         _count: { select: { exports: true } },
@@ -229,7 +230,7 @@ export default async function DashboardPage() {
                       <Package className="h-4 w-4 text-primary" />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-medium">{product.title || "Sans titre"}</p>
+                      <p className="truncate text-sm font-medium">{product.generatedTitle || product.name || "Sans titre"}</p>
                       <p className="text-xs text-muted-foreground">
                         {TONE_LABELS[product.tone] ?? product.tone} · {formatDate(product.createdAt)}
                       </p>
