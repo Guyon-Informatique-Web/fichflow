@@ -6,5 +6,5 @@ if (!process.env.STRIPE_SECRET_KEY) {
 
 export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
   typescript: true,
-  maxNetworkRetries: 0,
+  httpClient: Stripe.createFetchHttpClient(),
 });
