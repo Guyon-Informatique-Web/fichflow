@@ -1,4 +1,5 @@
 // Landing page marketing FichFlow
+import { WebApplicationJsonLd, FAQJsonLd } from "@/components/seo/JsonLd";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -97,6 +98,8 @@ const STEPS = [
 export default function HomePage() {
   return (
     <div className="flex min-h-screen flex-col">
+      <WebApplicationJsonLd />
+      <FAQJsonLd />
       {/* Header / Navbar */}
       <header className="sticky top-0 z-50 border-b bg-background/80 backdrop-blur-sm">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">

@@ -179,7 +179,7 @@ export function ProductPdf({
 
         {/* Pied de page */}
         <Text style={styles.footer}>
-          {branding ? `Fiche produit — ${branding.companyName}` : `Fiche produit générée par FichFlow — ${name}`}
+          {branding ? `Fiche produit — ${branding.companyName}` : `Fiche produit générée par FichFlow — fichflow.fr`}
         </Text>
       </Page>
     </Document>
