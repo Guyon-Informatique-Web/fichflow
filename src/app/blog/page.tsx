@@ -80,7 +80,8 @@ export default function BlogPage() {
 
         <div className="mt-10 grid gap-6 sm:grid-cols-2">
           {ARTICLES.map((article) => (
-            <Card key={article.slug} className="group transition-all hover:border-primary/50 hover:shadow-md">
+            <Link key={article.slug} href={`/blog/${article.slug}`}>
+            <Card className="group h-full transition-all hover:border-primary/50 hover:shadow-md">
               <CardContent className="p-5">
                 <div className="mb-3 flex items-center gap-2 text-xs">
                   <span className="rounded-full bg-primary/10 px-2 py-0.5 font-medium text-primary">
@@ -95,6 +96,7 @@ export default function BlogPage() {
                 <p className="mt-3 text-xs text-muted-foreground">{article.date}</p>
               </CardContent>
             </Card>
+            </Link>
           ))}
         </div>
 
