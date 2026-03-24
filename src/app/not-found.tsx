@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { FileQuestion } from "lucide-react";
+import { FileQuestion, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function NotFound() {
@@ -14,12 +14,20 @@ export default function NotFound() {
       </div>
       <div className="flex gap-3">
         <Button asChild>
-          <Link href="/dashboard">Retour au dashboard</Link>
-        </Button>
-        <Button variant="outline" asChild>
           <Link href="/">Page d&apos;accueil</Link>
         </Button>
+        <Button variant="outline" asChild>
+          <Link href="/inscription">
+            Créer un compte <ArrowRight className="ml-2 h-4 w-4" />
+          </Link>
+        </Button>
       </div>
+      <p className="mt-4 text-sm text-muted-foreground">
+        Besoin d&apos;aide ? Contactez-nous à{" "}
+        <a href="mailto:contact@guyon-informatique-web.fr" className="text-primary underline">
+          contact@guyon-informatique-web.fr
+        </a>
+      </p>
     </div>
   );
 }
